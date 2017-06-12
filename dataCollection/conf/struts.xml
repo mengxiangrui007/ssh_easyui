@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+	<!-- 使用了jsonplugin的插件 -->
+	<package name="default" extends="json-default">
+		<!-- 配置拦截器 -->
+		<interceptors>
+		   <!-- 系统登录拦截器 -->
+		   <interceptor name="loginInterceptor" class="com.data.share.interceptor.LoginInterceptor"></interceptor>
+		   <!-- 系统日志拦截器 -->
+			<interceptor name="logInterceptor" class="com.data.share.interceptor.LoggerInterceptor"></interceptor>
+			<!-- 默认拦截器栈 -->
+			<interceptor-stack name="commonStack">
+				<!-- struts2默认拦截器 -->
+				<interceptor-ref name="exception" />
+				<interceptor-ref name="alias" />
+				<interceptor-ref name="servletConfig" />
+				<interceptor-ref name="i18n" />
+				<interceptor-ref name="prepare" />
+				<interceptor-ref name="chain" />
+				<interceptor-ref name="debugging" />
+				<interceptor-ref name="scopedModelDriven" />
+				<interceptor-ref name="modelDriven" />
+				<interceptor-ref name="fileUpload" />
+				<interceptor-ref name="checkbox" />
+				<interceptor-ref name="multiselect" />
+				<interceptor-ref name="staticParams" />
+				<interceptor-ref name="actionMappingParams" />
+				<interceptor-ref name="params">
+					<!-- 刷新栈顶解决model赋值问题 -->
+						<param name="modelDriven.refreshModelBeforeResult">true</param>
+						<!-- 文件上传的大小 -->
+						<param name="fileUpload.maximumSize">60000</param>
+						<!-- 文件的扩展名 -->
+						<param name="fileUpload.allowedExtensions">.jpg,.jpeg,.png,.gif</param>
+						<!-- 文件的内容类型 -->
+						<param name="fileUpload.allowedTypes">image/jpg,image/jpeg,image/pjpeg,image/png,image/gif,image/bmp</param>
+						<param name="excludeParams">dojo\..*,^struts\..*</param>
+				</interceptor-ref>
+				<interceptor-ref name="conversionError" />
+				<interceptor-ref name="validation">
+					<param name="excludeMethods">input,back,cancel,browse</param>
+				</interceptor-ref>
+				<interceptor-ref name="workflow">
+					<param name="excludeMethods">input,back,cancel,browse</param>
+				</interceptor-ref>
+			</interceptor-stack>
+
+			<!-- 通用拦截器栈 -->
+			<interceptor-stack name="generalStack">
+				<!-- 引用默认拦截器栈 -->
+				<interceptor-ref name="commonStack"></interceptor-ref>
+				<!-- 登陆拦截器 -->
+				<interceptor-ref name="loginInterceptor"></interceptor-ref>
+				<!-- 日志拦截器 -->
+				<interceptor-ref name="logInterceptor"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<!-- 全局结果映射 -->
+		<global-results>
+			<result name="excel" type="stream">
+				<param name="contentType">application/vnd.ms-excel</param>
+				<param name="inputName">excelStream</param>
+				<param name="contentDisposition">attachment;filename="${fileName}.xls"</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			<!-- 登陆界面 -->
+			<result name="login">
+		 			/jsp/login.jsp
+		 	</result>
+		</global-results>
+	</package>
+	
+		<!-- action基础包 -->
+	<package name="base" extends="default" namespace="/">
+		<!-- 引用默认拦截器堆栈 -->
+		<default-interceptor-ref name="generalStack"></default-interceptor-ref>
+		<!-- 个人基本信息管理 -->
+	</package>
+	
+	<!-- action共享包 -->
+	<package name="shared" extends="default" namespace="/">
+	   <action name="login.*" method="{1}" class="com.data.view.user.LoginAction"></action>
+	</package>	
+	
+		<!-- action基础包 -->
+	<package name="dataCollection" extends="base" namespace="/">
+	    <!-- 用户管理 -->
+		<action name="user.*" method="{1}" class="com.data.view.user.UserAction"></action>
+		<!-- 教师管理 -->
+		<action name="teacher.*" method="{1}" class="com.data.view.teacher.TeacherAction"></action>
+		<!-- 学生管理 -->
+		<action name="student.*" method="{1}" class="com.data.view.student.StudentAction"></action>
+		<!-- 院系管理 -->
+		<action name="department.*" method="{1}" class="com.data.view.department.DepartmentAction"></action>
+		<!-- 菜单管理 -->
+		<action name="menu.*" method="{1}" class="com.data.view.menu.MenuAction"></action>
+		<!-- 角色管理 -->
+		<action name="role.*" method="{1}" class="com.data.view.role.RoleAction"></action>
+		<!-- 日志管理 -->
+		<action name="syslog.*" method="{1}" class="com.data.view.syslog.SysLogAction"></action>
+		<!-- 调查项目管理 -->
+		<action name="item.*" method="{1}" class="com.data.view.item.ItemAction"></action>
+		<!-- 调查管理 -->
+		<action name="survey.*" method="{1}" class="com.data.view.survey.SurveyAction"></action>
+		<!-- 专业管理 -->
+		<action name="professional.*" method="{1}" class="com.data.view.professional.ProfessionalAction"></action>
+		<!-- 打分管理 -->
+		<action name="score.*" method="{1}" class="com.data.view.score.ScoreAction"></action>
+	</package>
+</struts>
